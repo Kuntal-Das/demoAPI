@@ -1,4 +1,7 @@
 /.vscode
 /bin
 /obj
+
 .env
+
+.Development.json
