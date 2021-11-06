@@ -43,37 +43,37 @@ namespace Catalog.Controllers
 
         // POST /items
         [HttpPost]
-        public ActionResult<ItemDto> CreateItem(CreateItemDto itemDto)
+        public ActionResult<ItemDto> CreateItem(CreateItemDto CreatedItemDto)
         {
-            Item item = new()
+            Item CreatedItem = new()
             {
                 Id = Guid.NewGuid(),
-                Name = itemDto.Name,
-                Price = itemDto.Price,
+                Name = CreatedItemDto.Name,
+                Price = CreatedItemDto.Price,
                 CreatedDate = DateTimeOffset.UtcNow
             };
 
-            repository.CreateItem(item);
+            repository.CreateItem(CreatedItem);
 
-            return CreatedAtAction(nameof(GetItem), new { ID = item.Id }, item.AsDto());
+            return CreatedAtAction(nameof(GetItem), new { ID = CreatedItem.Id }, CreatedItem.AsDto());
         }
 
         // PUT /items/{id}
         [HttpPut("{id}")]
-        public ActionResult UpdateItem(Guid id, UpdateItemDto itemDto)
+        public ActionResult UpdateItem(Guid id, UpdateItemDto UpdatedItemDto)
         {
-            var item = repository.GetItem(id);
-            if (item == null)
+            Item CurrentItem = repository.GetItem(id);
+            if (CurrentItem == null)
             {
                 return NotFound();
             }
 
-            Item updatedItem = item with
+            Item UpdatedItem = CurrentItem with
             {
-                Name = itemDto.Name,
-                Price = itemDto.Price
+                Name = UpdatedItemDto.Name,
+                Price = UpdatedItemDto.Price
             };
-            repository.UpdateItem(updatedItem);
+            repository.UpdateItem(UpdatedItem);
 
             return NoContent();
         }
@@ -82,8 +82,8 @@ namespace Catalog.Controllers
         [HttpDelete("{id}")]
         public ActionResult DeleteItem(Guid id)
         {
-            var existingItem = repository.GetItem(id);
-            if (existingItem == null)
+            Item ExistingItem = repository.GetItem(id);
+            if (ExistingItem == null)
             {
                 return NotFound();
             }
