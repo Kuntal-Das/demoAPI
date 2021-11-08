@@ -2,8 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Catalog.Config;
-using Catalog.Repositories;
+using Catalog.Api.Config;
+using Catalog.Api.Repositories;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -22,7 +22,7 @@ using System.Text.Json;
 using System.Net.Mime;
 using Microsoft.AspNetCore.Http;
 
-namespace Catalog
+namespace Catalog.Api
 {
     public class Startup
     {

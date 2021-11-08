@@ -1,4 +1,4 @@
-namespace Catalog.Config
+namespace Catalog.Api.Config
 {
     public class MongoDBLocalConfig
     {
