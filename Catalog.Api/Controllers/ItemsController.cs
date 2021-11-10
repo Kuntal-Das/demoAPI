@@ -6,6 +6,7 @@ using System;
 using System.Linq;
 using Catalog.Api.Dtos;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 
 namespace Catalog.Api.Controllers
 {
@@ -16,10 +17,13 @@ namespace Catalog.Api.Controllers
     public class ItemsController : ControllerBase
     {
         private readonly IItemsRepository repository;
+        private readonly ILogger<ItemsController> logger;
 
-        public ItemsController(IItemsRepository repository)
+
+        public ItemsController(IItemsRepository repository, ILogger<ItemsController> logger)
         {
             this.repository = repository;
+            this.logger = logger;
         }
 
         // Get /items
