@@ -51,10 +51,7 @@ namespace Catalog.UnitTests
             var result = await controller.GetItemAsync(Guid.NewGuid());
 
             // Assert
-            result.Value.Should().BeEquivalentTo(
-                expectedItem,
-                options => options.ComparingByMembers<Item>()
-                );
+            result.Value.Should().BeEquivalentTo(expectedItem);
 
             // Assert.IsType<ItemDto>(result.Value);
 
@@ -84,10 +81,7 @@ namespace Catalog.UnitTests
             IEnumerable<ItemDto> actualItems = await controller.GetItemsAsync();
 
             // Assert
-            actualItems.Should().BeEquivalentTo(
-                expectedItems,
-                options => options.ComparingByMembers<Item>()
-            );
+            actualItems.Should().BeEquivalentTo(expectedItems);
         }
 
         [Fact]
