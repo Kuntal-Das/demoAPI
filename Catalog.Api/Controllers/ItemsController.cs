@@ -55,6 +55,7 @@ namespace Catalog.Api.Controllers
             {
                 Id = Guid.NewGuid(),
                 Name = CreatedItemDto.Name,
+                Description = CreatedItemDto.Description,
                 Price = CreatedItemDto.Price,
                 CreatedDate = DateTimeOffset.UtcNow
             };
