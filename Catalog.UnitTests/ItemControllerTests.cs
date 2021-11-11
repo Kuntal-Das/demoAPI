@@ -30,7 +30,7 @@ namespace Catalog.UnitTests
             ItemsController controller = new ItemsController(repositoryStub.Object, loggerStub.Object);
 
             // Act
-            ActionResult<ItemDto> result = await controller.GetItemAsync(Guid.NewGuid());
+            var result = await controller.GetItemAsync(Guid.NewGuid());
 
             // Assert
             result.Result.Should().BeOfType<NotFoundResult>();
@@ -41,14 +41,14 @@ namespace Catalog.UnitTests
         public async Task GetItemAsync_WithExistingItem_ReturnsExpectedItem()
         {
             // Arrange
-            Item expectedItem = CrreateRandomItem();
+            Item expectedItem = CreateRandomItem();
 
             repositoryStub.Setup(repo => repo.GetItemAsync(It.IsAny<Guid>()))
                 .ReturnsAsync(expectedItem);
             ItemsController controller = new ItemsController(repositoryStub.Object, loggerStub.Object);
 
             // Act
-            ActionResult<ItemDto> result = await controller.GetItemAsync(Guid.NewGuid());
+            var result = await controller.GetItemAsync(Guid.NewGuid());
 
             // Assert
             result.Value.Should().BeEquivalentTo(
@@ -70,9 +70,9 @@ namespace Catalog.UnitTests
         {
             // Arrange
             Item[] expectedItems = new[] {
-                CrreateRandomItem(),
-                CrreateRandomItem(),
-                CrreateRandomItem()
+                CreateRandomItem(),
+                CreateRandomItem(),
+                CreateRandomItem()
             };
 
             repositoryStub.Setup(repo => repo.GetItemsAsync())
@@ -106,7 +106,7 @@ namespace Catalog.UnitTests
             var result = await controller.CreateItemAsync(itemToCreate);
 
             // Assert
-            var createdItem = (result.Result as CreatedAtActionResult).Value as ItemDto;
+            ItemDto createdItem = (result.Result as CreatedAtActionResult).Value as ItemDto;
             itemToCreate.Should().BeEquivalentTo(
                 createdItem,
                 options => options.ComparingByMembers<ItemDto>().ExcludingMissingMembers()
@@ -120,18 +120,45 @@ namespace Catalog.UnitTests
 
         [Fact]
         public async Task UpdatedItemAsync_WithItemToUpdate_ReturnsNoContent()
-        { 
-            // TODO
-            throw new NotImplementedException("TODO: UpdatedItemAsync_WithItemToUpdate_ReturnsNoContent");
+        {
             // Arrage
+            Item existingItem = CreateRandomItem();
+            repositoryStub.Setup(repo => repo.GetItemAsync(It.IsAny<Guid>()))
+                .ReturnsAsync(existingItem);
+
+            Guid itemId = existingItem.Id;
+            UpdateItemDto itemToUpdate = new()
+            {
+                Name = Guid.NewGuid().ToString(),
+                Price = existingItem.Price + 3
+            };
+
+            ItemsController controller = new(repositoryStub.Object, loggerStub.Object);
 
             // Act 
+            var result = await controller.UpdateItemAsync(itemId, itemToUpdate);
 
             // Assert
+            result.Should().BeOfType<NoContentResult>();
         }
 
+        [Fact]
+        public async Task DeleteItemAsync_WithItemToDelete_ReturnsNoContent()
+        {
+            Item existingItem = CreateRandomItem();
+            repositoryStub.Setup(repo => repo.GetItemAsync(It.IsAny<Guid>()))
+                .ReturnsAsync(existingItem);
 
-        private Item CrreateRandomItem()
+            ItemsController controller = new(repositoryStub.Object, loggerStub.Object);
+
+            // Act 
+            var result = await controller.DeleteItemAsync(existingItem.Id);
+
+            // Assert
+            result.Should().BeOfType<NoContentResult>();
+        }
+        
+        private Item CreateRandomItem()
         {
             return new Item()
             {
