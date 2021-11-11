@@ -73,13 +73,10 @@ namespace Catalog.Api.Controllers
             {
                 return NotFound();
             }
-
-            Item UpdatedItem = CurrentItem with
-            {
-                Name = UpdatedItemDto.Name,
-                Price = UpdatedItemDto.Price
-            };
-            await repository.UpdateItemAsync(UpdatedItem);
+            CurrentItem.Name = UpdatedItemDto.Name;
+            CurrentItem.Price = UpdatedItemDto.Price;
+            
+            await repository.UpdateItemAsync(CurrentItem);
 
             return NoContent();
         }

@@ -94,19 +94,18 @@ namespace Catalog.UnitTests
         public async Task CreateItemAsync_WithItemToCreate_ReturnsCreatedItem()
         {
             // Arrange
-            CreateItemDto itemToCreate = new CreateItemDto()
-            {
-                Name = Guid.NewGuid().ToString(),
-                Price = rand.Next(1000)
-            };
-
-            ItemsController controller = new(repositoryStub.Object, loggerStub.Object);
+            CreateItemDto itemToCreate = new CreateItemDto(
+                Guid.NewGuid().ToString(),
+                Guid.NewGuid().ToString(), 
+                rand.Next(1000));
+                
+            var controller = new ItemsController(repositoryStub.Object, loggerStub.Object);
 
             // Act
             var result = await controller.CreateItemAsync(itemToCreate);
 
             // Assert
-            ItemDto createdItem = (result.Result as CreatedAtActionResult).Value as ItemDto;
+            var createdItem = (result.Result as CreatedAtActionResult).Value as ItemDto;
             itemToCreate.Should().BeEquivalentTo(
                 createdItem,
                 options => options.ComparingByMembers<ItemDto>().ExcludingMissingMembers()
@@ -127,11 +126,11 @@ namespace Catalog.UnitTests
                 .ReturnsAsync(existingItem);
 
             Guid itemId = existingItem.Id;
-            UpdateItemDto itemToUpdate = new()
-            {
-                Name = Guid.NewGuid().ToString(),
-                Price = existingItem.Price + 3
-            };
+            UpdateItemDto itemToUpdate = new(
+                Guid.NewGuid().ToString(),
+                Guid.NewGuid().ToString(),
+                existingItem.Price + 3
+            );
 
             ItemsController controller = new(repositoryStub.Object, loggerStub.Object);
 
