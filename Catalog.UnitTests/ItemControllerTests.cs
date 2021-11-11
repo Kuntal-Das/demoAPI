@@ -83,6 +83,33 @@ namespace Catalog.UnitTests
             // Assert
             actualItems.Should().BeEquivalentTo(expectedItems);
         }
+        [Fact]
+        public async Task GetItemsAsync_WithMatchingItemsNames_ReturnsMatchingItem()
+        {
+            // Arrange
+            Item[] allItems = new[] {
+                new Item(){Name = "Potion" },
+                new Item(){Name = "Antidote" },
+                new Item(){Name = "Hi-Potion" },
+                new Item(){Name = "Low-Potion" }
+            };
+
+            var nameToMatch = "Potion";
+
+            repositoryStub.Setup(repo => repo.GetItemsAsync())
+                .ReturnsAsync(allItems);
+
+            ItemsController controller = new(repositoryStub.Object, loggerStub.Object);
+
+            // Act
+            IEnumerable<ItemDto> foundItems = await controller.GetItemsAsync(nameToMatch);
+
+            // Assert
+            foundItems.Should().OnlyContain(
+                // item => item.Name == allItems[0].Name || item.Name == allItems[2].Name
+                item => item.Name.Contains(nameToMatch)
+            );
+        }
 
         [Fact]
         public async Task CreateItemAsync_WithItemToCreate_ReturnsCreatedItem()
@@ -90,9 +117,9 @@ namespace Catalog.UnitTests
             // Arrange
             CreateItemDto itemToCreate = new CreateItemDto(
                 Guid.NewGuid().ToString(),
-                Guid.NewGuid().ToString(), 
+                Guid.NewGuid().ToString(),
                 rand.Next(1000));
-                
+
             var controller = new ItemsController(repositoryStub.Object, loggerStub.Object);
 
             // Act
@@ -150,7 +177,7 @@ namespace Catalog.UnitTests
             // Assert
             result.Should().BeOfType<NoContentResult>();
         }
-        
+
         private Item CreateRandomItem()
         {
             return new Item()
