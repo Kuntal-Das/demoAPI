@@ -28,10 +28,18 @@ namespace Catalog.Api.Controllers
 
         // Get /items
         [HttpGet]
-        public async Task<IEnumerable<ItemDto>> GetItemsAsync()
+        public async Task<IEnumerable<ItemDto>> GetItemsAsync(string name = null)
         {
             var items = (await repository.GetItemsAsync())
                             .Select(item => item.AsDto());
+
+            if (!string.IsNullOrWhiteSpace(name))
+            {
+                items = items.Where(item => item.Name.Contains(name, StringComparison.OrdinalIgnoreCase));
+            }
+
+            logger.LogInformation($"{DateTime.UtcNow.ToString("hh:mm:ss")}: Retreved {items.Count()} items");
+
             return items;
         }
 
@@ -76,7 +84,7 @@ namespace Catalog.Api.Controllers
             }
             CurrentItem.Name = UpdatedItemDto.Name;
             CurrentItem.Price = UpdatedItemDto.Price;
-            
+
             await repository.UpdateItemAsync(CurrentItem);
 
             return NoContent();
@@ -95,5 +103,7 @@ namespace Catalog.Api.Controllers
             await repository.DeleteItemAsync(id);
             return NoContent();
         }
+
+
     }
 }
